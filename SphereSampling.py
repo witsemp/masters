@@ -1,19 +1,29 @@
 import numpy as np
-import random
 from matplotlib import pyplot as plt
-from mpl_toolkits.mplot3d import axes3d
+import xml.etree.cElementTree as ET
 xi, yi, zi = [], [], []
-phi = np.linspace(0, np.pi, num=5)
-theta = np.linspace(0, 2 * np.pi, num=10)
-R = 3
-for p in phi:
-    for t in theta:
-        x = R * np.sin(t) * np.cos(p)
-        xi.append(x)
-        y = R * np.sin(t) * np.sin(p)
-        yi.append(y)
+points = ET.Element("Points")
+phi = np.linspace(0, 2* np.pi, num=60)
+theta = np.linspace(0, 2 * np.pi, num=60)
+R = 1.35
+for t in theta:
+    for p in phi:
         z = R * np.cos(t)
-        zi.append(z)
+        if 0 < z < R:
+            zi.append(z)
+            x = R * np.sin(t) * np.cos(p)
+            xi.append(x)
+            y = R * np.sin(t) * np.sin(p)
+            yi.append(y)
+            point = ET.SubElement(points, "Point")
+            ET.SubElement(point, "xCoord").text = str(x)
+            ET.SubElement(point, "yCoord").text = str(y)
+            ET.SubElement(point, "zCoord").text = str(z)
+        else:
+            continue
+tree = ET.ElementTree(points)
+tree.write("filename.xml")
+
 
 phi = np.linspace(0, np.pi, num=20)
 theta = np.linspace(0, 2 * np.pi, num=40)
